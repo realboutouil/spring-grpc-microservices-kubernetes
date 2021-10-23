@@ -1,0 +1,9 @@
+# Increase the amount of replicas for the Auth Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-client
+
+spec:
+  # Scale to more replicas when uploaded to AWS
+  replicas: 2

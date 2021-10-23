@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongodb
+type: Opaque
+stringData:
+  database-user: cGlvdHI=
+  database-password: UGlvdF8xMjM=

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-server
+  labels:
+    app: grpc-server
+spec:
+  # Scaling
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grpc-server
+  template:
+    metadata:
+      labels:
+        app: grpc-server
+    spec:
+      containers:
+        - name: grpc-server
+          image: ghcr.io/mohammedamineboutouil/grpc-server:0.1.0
+          imagePullPolicy: Always
+          # Resources
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "500m"
+            limits:
+              memory: "384Mi"
+              cpu: "2000m"
+          # System environment
+          env:
+            - name: INSTANCE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: GRPC_SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: grpc-server-cm
+                  key: GRPC_SERVER_PORT
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: grpc-server-cm
+                  key: SPRING_PROFILES_ACTIVE
+      imagePullSecrets:
+        - name: my-ghcr
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always

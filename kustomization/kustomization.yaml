@@ -1,0 +1,7 @@
+# See https://kubectl.docs.kubernetes.io/pages/examples/kustomize.html for reference.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - app.rbac.yaml
+  - istio-gateway.yaml

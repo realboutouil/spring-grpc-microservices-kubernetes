@@ -1,0 +1,71 @@
+server:
+  netty:
+    connection-timeout: 2s
+  shutdown: graceful
+
+spring:
+  application:
+    name: api-gateway
+  lifecycle:
+    timeout-per-shutdown-phase: 15s
+  main:
+    allow-bean-definition-overriding: true
+  # API GATEWAY SERVICE CONFIG
+  cloud:
+    kubernetes:
+      enabled: true
+      discovery:
+        enabled: true
+      config:
+        enabled: false
+      loadbalancer:
+        enabled: true
+    gateway:
+      httpclient:
+        connect-timeout: 2000
+        response-timeout: 5s
+        pool:
+          type: elastic
+          max-idle-time: 15s
+          max-life-time: 60s
+      routes:
+        - id: grpc-client-svc
+          uri: lb://grpc-client-svc
+          predicates:
+            - Path=/grpc-client/**
+          filters:
+            - RewritePath=/grpc-client/(?<path>.*), /$\{path}
+        - id: grpc-server-svc
+          uri: lb://grpc-server-svc
+          predicates:
+            - Path=/grpc-server/**
+          filters:
+            - RewritePath=/grpc-server/(?<path>.*), /$\{path}
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-methods:
+              - "*"
+            allowed-headers:
+              - "*"
+            allowed-origin-patterns:
+              - "*" # https://*.domain.com
+            allow-credentials: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      probes:
+        enabled: true
+      show-details: ALWAYS
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true

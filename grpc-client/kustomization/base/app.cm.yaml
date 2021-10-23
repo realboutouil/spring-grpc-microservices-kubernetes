@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grpc-client-cm
+data:
+  # References to SPRING ACTIVE PROFILE to run service
+  SPRING_PROFILES_ACTIVE: "default"
+  # Must match the port defined in app.{deployment,service}.yaml
+  SERVER_PORT: "8080"
+  SERVICES_CARD_PORT: "8080"
+  SERVICES_CARD_HOST: "grpc-server-svc"

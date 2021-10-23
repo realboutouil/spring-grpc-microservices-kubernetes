@@ -1,0 +1,39 @@
+server:
+  port: ${PORT:0}
+
+services:
+  card:
+    port: 8085
+    host: localhost
+
+spring:
+  application:
+    name: grpc-client
+  data:
+    mongodb:
+      uri: ${MONGO_DB_URI:mongodb://user:root@localhost:27017/user_db?authSource=admin}
+      auto-index-creation: true
+  cloud:
+    kubernetes:
+      discovery:
+        enabled: true
+      config:
+        enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      probes:
+        enabled: true
+      show-details: ALWAYS
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true

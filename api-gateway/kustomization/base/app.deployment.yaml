@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  labels:
+    app: api-gateway
+spec:
+  # Scaling
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+        - name: api-gateway
+          image: ghcr.io/mohammedamineboutouil/api-gateway:0.1.0
+          imagePullPolicy: Always
+          # Check run that if you have hope that restarting will help!
+          # The Readiness state tells whether the application is ready to accept client requests.
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /actuator/health/readiness
+            initialDelaySeconds: 20
+            periodSeconds: 30
+          # The Liveness state of an application tells whether the internal state is valid (e.g.,
+          # it is connected to a required DB, cache, ...).
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          # Resources
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "500m"
+            limits:
+              memory: "384Mi"
+              cpu: "2000m"
+          # System environment
+          env:
+            - name: INSTANCE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: api-gateway-cm
+                  key: SERVER_PORT
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: api-gateway-cm
+                  key: SPRING_PROFILES_ACTIVE
+      imagePullSecrets:
+        - name: my-ghcr
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always

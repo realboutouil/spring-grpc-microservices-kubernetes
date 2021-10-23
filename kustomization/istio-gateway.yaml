@@ -1,0 +1,50 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: istio-gateway
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: istio-gateway-routes
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - istio-gateway
+  http:
+    - match:
+      - uri:
+          prefix: "/api/"
+      - uri:
+          prefix: "/api"
+      rewrite:
+        uri: "/"
+      route:
+        - destination:
+            host: api-gateway-svc
+            port:
+              number: 8080
+      corsPolicy:
+        allowOrigin:
+          - "*"
+        allowMethods:
+          - GET
+          - POST
+          - DELETE
+          - PUT
+          - PATCH
+          - OPTIONS
+        allowHeaders:
+          - "*"
+        allowCredentials: true

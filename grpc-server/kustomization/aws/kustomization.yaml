@@ -1,0 +1,13 @@
+# See https://kubectl.docs.kubernetes.io/pages/examples/kustomize.html for reference.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+# By specifying the namespace in kustomization.yaml, we ensure that all resources will automatically have their
+# namespace set to this value.
+# Note: this must match the namespace defined in the ClusterStack, see the infrastructure-as-code article!
+namespace: grpc-server-app
+
+resources:
+  - ../base
+
+patchesStrategicMerge:
+  - update-replicas.yaml

@@ -1,0 +1,37 @@
+# To learn more about the skaffold.yaml schema visit
+# https://skaffold.dev/docs/references/yaml/
+apiVersion: skaffold/v2beta23
+kind: Config
+metadata:
+  name: aws-k3s-spring-grpc-microservices
+
+# defines the Kubernetes manifests to deploy on each run
+deploy:
+  kustomize:
+    paths:
+      - kustomization
+      - api-gateway/kustomization/base
+      - grpc-client/kustomization/base
+      - grpc-server/kustomization/base
+
+portForward:
+  # Cloud Code automatically port forwards resources,
+  # or users can define explicit port forwards here.
+  # For more info, visit https://skaffold.dev/docs/pipeline-stages/port-forwarding/#UDPF
+  - resourceType: service
+    resourceName: api-gateway-svc
+    port: 8080
+    localPort: 5000
+
+profiles:
+  - name: local
+    activation:
+      - kubeContext: docker-desktop
+    build:
+      local:
+        push: false
+  - name: aws
+    deploy:
+      kustomize:
+        paths:
+          - kustomization/aws
