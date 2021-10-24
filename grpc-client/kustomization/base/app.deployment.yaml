@@ -59,6 +59,11 @@ spec:
                 configMapKeyRef:
                   name: grpc-client-cm
                   key: SPRING_PROFILES_ACTIVE
+            - name: MONGO_DB_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: grpc-client-cm
+                  key: MONGO_DB_URI
             - name: SERVICES_CARD_PORT
               valueFrom:
                 configMapKeyRef:

@@ -11,12 +11,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
-    implementation "org.springframework.cloud:spring-cloud-starter-kubernetes-all:$kubernetesVersion"
+    implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-client-all'
+    implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-client-loadbalancer'
 }
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        // SpringCloud BOM/platform dependency. This is the only place you set version of SpringCloud
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+        // Kubernetes BOM/platform dependency. This is the only place you set version of Kubernetes
+        mavenBom "org.springframework.cloud:spring-cloud-kubernetes-dependencies:$kubernetesVersion"
     }
 }
 

@@ -7,5 +7,6 @@ data:
   SPRING_PROFILES_ACTIVE: "default"
   # Must match the port defined in app.{deployment,service}.yaml
   SERVER_PORT: "8080"
+  MONGO_DB_URI: "mongodb://user:root@localhost:27017/user_db?authSource=admin"
   SERVICES_CARD_PORT: "8080"
   SERVICES_CARD_HOST: "grpc-server-svc"

@@ -15,6 +15,7 @@ spring:
       auto-index-creation: true
   cloud:
     kubernetes:
+      enabled: true
       discovery:
         enabled: true
       config:

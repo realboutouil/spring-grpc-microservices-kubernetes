@@ -11,7 +11,8 @@ dependencies {
 //    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
-    implementation "org.springframework.cloud:spring-cloud-starter-kubernetes-all:$kubernetesVersion"
+    implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-client-all'
+    implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-client-loadbalancer'
     implementation "com.google.protobuf:protobuf-java:$protobufVersion"
     implementation "io.grpc:grpc-netty-shaded"
     implementation "io.grpc:grpc-protobuf"
@@ -20,7 +21,10 @@ dependencies {
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        // SpringCloud BOM/platform dependency. This is the only place you set version of SpringCloud
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+        // Kubernetes BOM/platform dependency. This is the only place you set version of Kubernetes
+        mavenBom "org.springframework.cloud:spring-cloud-kubernetes-dependencies:$kubernetesVersion"
         // gRPC BOM/platform dependency. This is the only place you set version of gRPC
         mavenBom "io.grpc:grpc-bom:$grpcVersion"
     }

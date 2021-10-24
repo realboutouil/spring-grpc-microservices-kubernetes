@@ -19,10 +19,10 @@ public class CardClient {
     private final ServicesProperties servicesProps;
 
     public List<UserCardDto> getUserCards(User user) {
-        ManagedChannel channel = openChannel();
+        var channel = openChannel();
         try {
-            CardServiceGrpc.CardServiceBlockingStub stub = getBlockingStub(channel);
-            GetCardResponse getCardResponse = stub.getCardsByUser(GetCardRequest.newBuilder()
+            var stub = getBlockingStub(channel);
+            var getCardResponse = stub.getCardsByUser(GetCardRequest.newBuilder()
                     .setUserId(user.getId())
                     .build());
             return getUserCards(getCardResponse.getCardsList());
@@ -32,10 +32,10 @@ public class CardClient {
     }
 
     public List<UserCardDto> addCard(String userId, List<UserCardDto> userCards) {
-        ManagedChannel channel = openChannel();
+        var channel = openChannel();
         try {
-            CardServiceGrpc.CardServiceBlockingStub stub = getBlockingStub(channel);
-            AddCardResponse addCardResponse = stub.addCard(AddCardRequest.newBuilder()
+            var stub = getBlockingStub(channel);
+            var addCardResponse = stub.addCard(AddCardRequest.newBuilder()
                     .setUserId(userId)
                     .addAllCard(userCards.stream()
                             .map(userCard -> Card.newBuilder()

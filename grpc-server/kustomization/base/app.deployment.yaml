@@ -43,6 +43,11 @@ spec:
                 configMapKeyRef:
                   name: grpc-server-cm
                   key: SPRING_PROFILES_ACTIVE
+            - name: MONGO_DB_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: grpc-server-cm
+                  key: MONGO_DB_URI
       imagePullSecrets:
         - name: my-ghcr
       dnsPolicy: ClusterFirst

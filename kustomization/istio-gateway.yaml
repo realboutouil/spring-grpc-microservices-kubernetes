@@ -24,10 +24,10 @@ spec:
     - istio-gateway
   http:
     - match:
-      - uri:
-          prefix: "/api/"
-      - uri:
-          prefix: "/api"
+        - uri:
+            prefix: "/api/"
+        - uri:
+            prefix: "/api"
       rewrite:
         uri: "/"
       route:
