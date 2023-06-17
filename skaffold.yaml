@@ -11,8 +11,8 @@ deploy:
     paths:
       - kustomization
       - api-gateway/kustomization/base
-      - grpc-client/kustomization/base
-      - grpc-server/kustomization/base
+      - services/grpc-client/kustomization/base
+      - services/grpc-server/kustomization/base
 
 portForward:
   # Cloud Code automatically port forwards resources,

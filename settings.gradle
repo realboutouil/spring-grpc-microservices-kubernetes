@@ -1,4 +1,5 @@
 rootProject.name = 'spring-grpc-microservices-kubernetes'
+
 include 'api-gateway'
-include 'grpc-client'
-include 'grpc-server'
+include 'services:grpc-client'
+include 'services:grpc-server'

@@ -5,12 +5,17 @@ plugins {
     id "com.google.protobuf" version "$protobufPluginVersion" apply false
 }
 
-subprojects {
+subprojects { project ->
+    if (!project.file('src').exists()) return
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'com.google.cloud.tools.jib'
     apply plugin: 'java'
     apply plugin: 'idea'
+
     group = 'com.boutouil'
 
-    sourceCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
 
     configurations {
         compileOnly {
@@ -20,6 +25,7 @@ subprojects {
 
     repositories {
         mavenCentral()
+        mavenLocal()
     }
 
     compileJava {
@@ -29,9 +35,64 @@ subprojects {
         ]
     }
 
+    if (project.projectDir.parentFile.name == 'services') {
+        apply plugin: 'com.google.protobuf'
+
+        dependencies {
+//            implementation 'org.springframework.boot:spring-boot-starter-web'
+            implementation 'org.springframework.boot:spring-boot-starter-actuator'
+            implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+            implementation "com.google.protobuf:protobuf-java"
+            implementation "io.grpc:grpc-netty-shaded"
+            implementation "io.grpc:grpc-protobuf"
+            implementation "io.grpc:grpc-stub"
+        }
+
+        dependencyManagement {
+            imports {
+                // protobuf BOM/platform dependency. This is the only place you set version of protobuf
+                mavenBom "com.google.protobuf:protobuf-bom:$protobufVersion"
+                // gRPC BOM/platform dependency. This is the only place you set version of gRPC
+                mavenBom "io.grpc:grpc-bom:$grpcVersion"
+            }
+        }
+
+        protobuf {
+            protoc { artifact = "com.google.protobuf:protoc:$protocVersion" }
+            plugins {
+                grpc { artifact = "io.grpc:protoc-gen-grpc-java:$grpcVersion" }
+            }
+            generateProtoTasks {
+                all()*.plugins { grpc {} }
+            }
+        }
+
+        // Inform IDEs like IntelliJ IDEA, Eclipse or NetBeans about the generated code.
+        sourceSets {
+            main {
+                java {
+                    srcDirs 'build/generated/source/proto/main/grpc'
+                    srcDirs 'build/generated/source/proto/main/java'
+                }
+            }
+        }
+    }
+
     dependencies {
+        implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+        implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-client-all'
+        implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-client-loadbalancer'
         compileOnly "org.mapstruct:mapstruct:$mapStructVersion", "org.projectlombok:lombok:${lombokVersion}"
         annotationProcessor "org.mapstruct:mapstruct-processor:$mapStructVersion", "org.projectlombok:lombok:${lombokVersion}", "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
         annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    }
+
+    dependencyManagement {
+        imports {
+            // SpringCloud BOM/platform dependency. This is the only place you set version of SpringCloud
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+            // Kubernetes BOM/platform dependency. This is the only place you set version of Kubernetes
+            mavenBom "org.springframework.cloud:spring-cloud-kubernetes-dependencies:$kubernetesVersion"
+        }
     }
 }
